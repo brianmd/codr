@@ -22,22 +22,43 @@ module Codr
     attribute :type, Symbol
   end
 
+  class Method < NamedElement
+  end
+
   class Model < NamedElement
     # attribute :attrs, Array[Attribute]
 
-    def add(attr)
-      add_attribute(attr)
+    def add(obj)
+      relationship = case obj
+      when Attribute
+        add_attribute(obj)
+      when Method
+        add_method(obj)
+      end
+      self.elements << relationship if relationship
+      relationship
     end
 
     def add_attribute(attr)
-      relationship = AttributeRelationship.new(model: self, attribute: attr)
-      self.elements << relationship
+      AttributeRelationship.new(model: self, attribute: attr)
     end
     
+    def add_method(method)
+      MethodRelationship.new(model: self, method: method)
+    end
+
     def attributes
+      self.elements_of_type(AttributeRelationship)
+    end
+
+    def methods
+      self.elements_of_type(MethodRelationship)
+    end
+
+    def elements_of_type(klass)
       self.elements
-        .select{ |ele| ele.class==AttributeRelationship }
-        .collect{ |attr| attr.attribute }
+        .select{ |ele| ele.class==klass }
+        .collect{ |obj| obj.to }
     end
   end
 
@@ -69,6 +90,13 @@ module Codr
     alias_method :model=, :from=
     alias_method :attribute, :to
     alias_method :attribute=, :to=
+  end
+
+  class MethodRelationship < DirectedRelationship
+    alias_method :model, :from
+    alias_method :model=, :from=
+    alias_method :method, :to
+    alias_method :method=, :to=
   end
 
   class CompositeRelationship < DirectedRelationship

@@ -14,6 +14,15 @@ module Codr
       expect(subject.attributes.first.type).to eq(:string)
     end
 
+    it 'handles methods' do
+      subject.add Method.new(name: :test_method)
+      expect(subject.elements.size).to eq(1)
+      expect(subject.methods.size).to eq(1)
+      expect(subject.methods.class).to eq(Array)
+      expect(subject.methods.first.class).to eq(Method)
+      expect(subject.methods.first.name).to eq(:test_method)
+    end
+
     it 'not yet', :pending do
     end
   end
