@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'ember'
 
-test_class_text = <<EOS
+$test_class_text = <<EOS
 import DS from 'ember-data';
 
 export default DS.Model.extend({
@@ -32,13 +32,13 @@ EOS
 
 module Codr::Ember
   describe FileAnalyzer do
-    context 'deciphers line types' do
+    context 'line' do
       it 'discovers classes' do
         expect(subject.findParser('export default Availability.extend({')).to eq(ClassDef)
       end
 
       it 'discovers properties' do
-        expect(subject.findParser("abc: Ember.computed.equal('sdf',true)")).to eq(AttributeDef)
+        expect(subject.findParser("  abc: Ember.computed.equal('sdf',true)")).to eq(AttributeDef)
       end
 
       it 'discovers methods' do
@@ -50,7 +50,17 @@ module Codr::Ember
       end
     end
 
-    context 'asdf' do
+    context 'lines' do
+      it 'get processed' do
+        lines = $test_class_text.split("\n")
+        analyzer = FileAnalyzer.new(lines)
+        models = analyzer.process
+        expect(models.size).to eq(1)
+
+        # note: Ember.computed is an attribute
+        expect(models.first.attributes.size).to eq(5)
+        expect(models.first.methods.size).to eq(1)
+      end
     end
   end
 end
