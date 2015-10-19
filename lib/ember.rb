@@ -3,9 +3,7 @@
 # attributes and methods.
 #
 # A later rendition will likely use a lexer and parser. This brain dead version
-# can read individual lines to extract what it needs.
-
-require 'virtus'
+# reads individual lines to extract what it needs.
 
 module Codr
   module Ember
