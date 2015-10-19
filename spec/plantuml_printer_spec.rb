@@ -34,14 +34,23 @@ export default DS.Model.extend({
 });
 EOS
 
+$test2_class_text = <<EOS
+export default Test.extend({
+  boolean:    DS.attr('boolean')
+});
+EOS
+
 module Codr
   describe PlantUmlPrinter do
     context 'lines' do
       it 'get processed' do
+        analyzer = Ember::FileAnalyzer.new(model_name: 'Test')
         lines = $test_class_text.split("\n")
-        analyzer = Ember::FileAnalyzer.new(lines, model_name: 'Test')
-        models = analyzer.process
-        expect(models.size).to eq(1)
+        models = analyzer.process(lines)
+        lines = $test2_class_text.split("\n")
+        analyzer.model_name = 'Test2'
+        models = analyzer.process(lines)
+        expect(models.size).to eq(2)
 
         # note: Ember.computed is an attribute
         expect(models.first.attributes.size).to eq(5)

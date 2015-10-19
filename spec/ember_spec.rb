@@ -53,8 +53,8 @@ module Codr::Ember
     context 'lines' do
       it 'get processed' do
         lines = $test_class_text.split("\n")
-        analyzer = FileAnalyzer.new(lines, model_name: 'Abc')
-        models = analyzer.process
+        analyzer = FileAnalyzer.new(model_name: 'Abc')
+        models = analyzer.process(lines)
         expect(models.size).to eq(1)
 
         expect(models.first.name).to eq(:Abc)

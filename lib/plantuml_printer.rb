@@ -16,7 +16,7 @@ module Codr
         end
         out.puts '}'
         out.puts "#{model.superclass} <|-- #{model.name}" if model.superclass
-
+        out.puts
       end
       out
     end

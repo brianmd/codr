@@ -8,14 +8,16 @@
 module Codr
   module Ember
     class FileAnalyzer
-      def initialize(lines=[], model_name: nil)
-        @lines = lines
+      include Virtus.model
+      attribute :model_name, Symbol
+
+      def initialize(model_name: nil)
         @models = []
         @model_name = model_name
       end
 
-      def process
-        @lines.each{ |line| processLine(line) }
+      def process(lines)
+        lines.each{ |line| processLine(line) }
         @models
       end
 
