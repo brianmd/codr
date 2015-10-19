@@ -15,10 +15,11 @@ module Codr
     def elements_are_valid
       errors.add(:elements, 'All objects in :elements must be of type Element') if self.elements.find{|obj| !obj.kind_of?(Element)}
     end
-    # def add(to)
-      # self.to = to
-      # to.from = self
-    # end
+  end
+
+  class Project < Element
+    include Virtus.model
+    include ActiveModel::Validations
   end
 
   class NamedElement < Element

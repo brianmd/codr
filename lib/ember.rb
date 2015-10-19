@@ -6,30 +6,43 @@
 # can read individual lines to extract what it needs.
 
 module Codr
-  class EmberFileAnalyzer
-    def initialize(lines=[])
-      @lines = lines
-    end
+  module Ember
+    class FileAnalyzer
+      def initialize(lines=[])
+        @lines = lines
+      end
 
-    def process
-      @lines.each do |line|
-        processLine line
+      def process
+        @lines.each do |line|
+          processLine line
+        end
+      end
+
+      def processLine(line)
+        findParser(line)
+      end
+
+      def findParser(line)
+        [ClassDef, AttributeDef, MethodDef].find{ |klass| klass.match?(line) }
       end
     end
 
-    def processLine(line)
-      findLineType(line)
+    class BaseDef
+      def self.match?(line)
+        !regex.match(line).nil?
+      end
     end
 
-    def findLineType(line)
-      case line
-      when /export.*default.*extend/
-        :class_def
-      when /Ember.computed/
-        :property
-      when /function/
-        :method_or_property
-      end
+    class ClassDef < BaseDef
+      def self.regex; /export.*default\s+(.*)\.extend/; end
+    end
+
+    class AttributeDef < BaseDef
+      def self.regex; /\s*([^:]+):\s+Ember.computed/; end
+    end
+
+    class MethodDef < BaseDef
+      def self.regex; /\s*([^:]+):\s+function/; end
     end
   end
 end

@@ -30,26 +30,28 @@ export default DS.Model.extend({
 });
 EOS
 
-describe Codr::EmberFileAnalyzer do
-  context 'deciphers line types' do
-    it 'discovers classes' do
-      expect(subject.findLineType('export default Availability.extend({')).to eq(:class_def)
+module Codr::Ember
+  describe FileAnalyzer do
+    context 'deciphers line types' do
+      it 'discovers classes' do
+        expect(subject.findParser('export default Availability.extend({')).to eq(ClassDef)
+      end
+
+      it 'discovers properties' do
+        expect(subject.findParser("abc: Ember.computed.equal('sdf',true)")).to eq(AttributeDef)
+      end
+
+      it 'discovers methods' do
+        expect(subject.findParser("abc: function() {")).to eq(MethodDef)
+      end
+
+      it 'discovers variables' do
+        expect(subject.findParser("abc: Ember.computed.equal('sdf',true)")).to eq(AttributeDef)
+      end
     end
 
-    it 'discovers properties' do
-      expect(subject.findLineType("abc: Ember.computed.equal('sdf',true)")).to eq(:property)
+    context 'asdf' do
     end
-
-    it 'discovers methods' do
-      expect(subject.findLineType("abc: function() {")).to eq(:method_or_property)
-    end
-
-    it 'discovers variables' do
-      expect(subject.findLineType("abc: Ember.computed.equal('sdf',true)")).to eq(:property)
-    end
-  end
-
-  context 'asdf' do
   end
 end
 
