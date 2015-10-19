@@ -12,6 +12,7 @@ module Codr
       expect(subject.attributes.first.class).to eq(Attribute)
       expect(subject.attributes.first.name).to eq(:test)
       expect(subject.attributes.first.type).to eq(:string)
+      expect(subject).to be_valid
     end
 
     it 'handles methods' do

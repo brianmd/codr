@@ -1,13 +1,20 @@
 require 'virtus'
+require 'active_model'
 
 module Codr
   class Element
     include Virtus.model
+    include ActiveModel::Validations
+
+    validate :elements_are_valid
 
     attribute :owner, Element
     attribute :elements, Array[Element]
-    attribute :visibility, String  # :public, :protected, :private
+    attribute :visibility, Symbol, default: :public  # :public, :protected, :private
 
+    def elements_are_valid
+      errors.add(:elements, 'All objects in :elements must be of type Element') if self.elements.find{|obj| !obj.kind_of?(Element)}
+    end
     # def add(to)
       # self.to = to
       # to.from = self
