@@ -5,6 +5,8 @@
 # A later rendition will likely use a lexer and parser. This brain dead version
 # reads individual lines to extract what it needs.
 
+require 'virtus'
+
 module Codr
   module Ember
     class FileAnalyzer
