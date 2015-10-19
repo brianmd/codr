@@ -34,7 +34,7 @@ module Codr
   end
 
   class Model < NamedElement
-    # attribute :attrs, Array[Attribute]
+    attribute :superclass, String   # TODO: this should be a relationship
 
     def add(obj)
       relationship = case obj

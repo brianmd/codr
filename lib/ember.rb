@@ -8,9 +8,10 @@
 module Codr
   module Ember
     class FileAnalyzer
-      def initialize(lines=[])
+      def initialize(lines=[], model_name: nil)
         @lines = lines
         @models = []
+        @model_name = model_name
       end
 
       def process
@@ -24,6 +25,7 @@ module Codr
           result = klass.process(line)
           if klass==ClassDef
             @model = result
+            @model.name = @model_name
             @models << @model
           else
             @model.add(result)
@@ -52,7 +54,9 @@ module Codr
 
       def self.process(line)
         m = regex.match(line)
-        Codr::Model.new(name: m[1])
+        # TODO: okay, okay. i'm being lazy. the superclass should be a relationship
+        superclass = m[1] if m and m[1]!='DS.Model'
+        Codr::Model.new(superclass: superclass)
       end
     end
 

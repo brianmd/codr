@@ -4,7 +4,7 @@ require 'ember'
 $test_class_text = <<EOS
 import DS from 'ember-data';
 
-export default DS.Model.extend({
+export default AnotherClass.extend({
   boolean:    DS.attr('boolean'),
   date:       DS.attr('date'),
   integer:    DS.attr('string'),
@@ -53,10 +53,12 @@ module Codr::Ember
     context 'lines' do
       it 'get processed' do
         lines = $test_class_text.split("\n")
-        analyzer = FileAnalyzer.new(lines)
+        analyzer = FileAnalyzer.new(lines, model_name: 'Abc')
         models = analyzer.process
         expect(models.size).to eq(1)
 
+        expect(models.first.name).to eq(:Abc)
+        expect(models.first.superclass).to eq('AnotherClass')
         # note: Ember.computed is an attribute
         expect(models.first.attributes.size).to eq(5)
         expect(models.first.methods.size).to eq(1)

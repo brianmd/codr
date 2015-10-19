@@ -39,7 +39,7 @@ module Codr
     context 'lines' do
       it 'get processed' do
         lines = $test_class_text.split("\n")
-        analyzer = Ember::FileAnalyzer.new(lines)
+        analyzer = Ember::FileAnalyzer.new(lines, model_name: 'Test')
         models = analyzer.process
         expect(models.size).to eq(1)
 

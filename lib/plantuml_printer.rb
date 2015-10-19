@@ -6,7 +6,7 @@ module Codr
 
     def puts(out)
       @models.each do |model|
-        out.puts "class Model {"
+        out.puts "class #{model.name} {"
         model.attributes.each do |attr|
           out.puts "  #{attr.name}"
         end
@@ -15,6 +15,8 @@ module Codr
           out.puts "  #{method.name}"
         end
         out.puts '}'
+        out.puts "#{model.superclass} <|-- #{model.name}" if model.superclass
+
       end
       out
     end
