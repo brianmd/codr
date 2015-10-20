@@ -6,6 +6,7 @@
 # reads individual lines to extract what it needs.
 
 require 'virtus'
+require 'models'
 
 module Codr
   module Ember

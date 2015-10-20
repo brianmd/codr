@@ -1,0 +1,77 @@
+#!/usr/bin/env ruby
+
+puts 'in bin/codr'
+
+
+require 'bundler/setup'
+require 'pathname'
+
+puts 'ember'
+require 'ember'
+puts 'codr'
+require 'codr'
+puts 'plantuml'
+require 'plantuml_printer'
+puts 'processing'
+
+class CodrProcessor
+  def self.process(input_path, output_path)
+    processor = self.new
+    processor.discover_models(input_path)
+    processor.print_models(output_path, processor.models_to_str(processor.models))
+  end
+
+  def models=(array)
+    @models = array
+  end
+
+  def models
+    @models ||= []
+  end
+
+  def analyzer
+    @analyzer ||= Codr::Ember::FileAnalyzer.new
+  end
+
+  def discover_models(path)
+    path = Pathname(path)
+    $stderr.puts "processing #{path}"
+    path.children.each do |file|
+      if file.file?
+        if file.to_s.end_with?('.js')
+          $stderr.puts file
+          analyzer.model_name = file.basename.to_s[0..-4]
+            .split('-')
+            .collect{|token| token.capitalize}
+            .join('')
+
+          lines = file.readlines
+          self.models = self.models + analyzer.process(lines)
+        end
+      else
+        # TODO: should put subdirectories into packages
+        process_path(f)
+      end
+    end
+    models
+  end
+
+  def models_to_str(models)
+    puts "\n\n\nmodels:", models
+    StringIO.open do |out|
+      Codr::PlantUmlPrinter.new(models).puts(out)
+      out.string
+    end
+  end
+
+  def print_models(path, result)
+    Pathname.new(path).open('w') do |out|
+      out.puts result
+    end
+    result
+  end
+end
+
+
+puts CodrProcessor.process('/Users/bmd/code/summit/brown-truck/app/models', '/Users/bmd/Dropbox/summit/uml/examples/brown-truck.txt')
+
