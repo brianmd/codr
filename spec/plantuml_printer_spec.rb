@@ -53,7 +53,6 @@ module Codr
         expect(models.size).to eq(2)
 
         # note: Ember.computed is an attribute
-        expect(models.first.attributes.size).to eq(5)
         expect(models.first.methods.size).to eq(1)
 
         printer = PlantUmlPrinter.new(models)
