@@ -48,7 +48,7 @@ class CodrProcessor
         end
       else
         # TODO: should put subdirectories into packages
-        process_path(f)
+        discover_models(file)
       end
     end
     models
@@ -75,5 +75,8 @@ end
 # TODO: use trollop to create cli
 
 #puts CodrProcessor.process('/Users/bmd/code/summit/brown-truck/app/models', '/Users/bmd/Dropbox/summit/uml/examples/brown-truck.txt')
-CodrProcessor.process('/Users/bmd/Documents/git/brown-truck/app/models', '/Users/bmd/Dropbox/summit/uml/examples/brown-truck.txt')
+
+#CodrProcessor.process('/Users/bmd/Documents/git/brown-truck/app/models', '/Users/bmd/Dropbox/summit/uml/examples/brown-truck.txt')
+CodrProcessor.process('/Users/bmd/Documents/git/brown-truck/app/controllers', '/Users/bmd/Dropbox/summit/uml/examples/bt-controllers.txt')
+CodrProcessor.process('/Users/bmd/Documents/git/brown-truck/app/routes', '/Users/bmd/Dropbox/summit/uml/examples/bt-routes.txt')
 

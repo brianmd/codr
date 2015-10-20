@@ -65,7 +65,8 @@ module Codr
       def self.process(line)
         m = get_match(line)
         # TODO: okay, okay. i'm being lazy. the superclass should be a relationship
-        superclass = m[1] if m and m[1]!='DS.Model'
+        # superclass = m[1] if m and m[1]!='DS.Model'
+        superclass = m[1] if m and !(m[1]=='DS.Model' || m[1]=='Ember.Controller' || m[1]=='Ember.Route')
         Codr::Model.new(superclass: superclass)
       end
     end
