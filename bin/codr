@@ -29,10 +29,6 @@ class CodrProcessor
     @models ||= []
   end
 
-  def analyzer
-    @analyzer ||= Codr::Ember::FileAnalyzer.new
-  end
-
   def discover_models(path)
     path = Pathname(path)
     $stderr.puts "processing #{path}"
@@ -40,6 +36,7 @@ class CodrProcessor
       if file.file?
         if file.to_s.end_with?('.js')
           $stderr.puts file
+          analyzer = Codr::Ember::FileAnalyzer.new
           analyzer.model_name = file.basename.to_s[0..-4]
             .split('-')
             .collect{|token| token.capitalize}
@@ -47,6 +44,7 @@ class CodrProcessor
 
           lines = file.readlines
           self.models = self.models + analyzer.process(lines)
+          #self.models << analyzer.process(lines).first
         end
       else
         # TODO: should put subdirectories into packages
@@ -57,7 +55,8 @@ class CodrProcessor
   end
 
   def models_to_str(models)
-    puts "\n\n\nmodels:", models
+    # puts "\n\n\nmodels:", models
+    models.each{ |model| puts model.name }
     StringIO.open do |out|
       Codr::PlantUmlPrinter.new(models).puts(out)
       out.string
@@ -73,5 +72,8 @@ class CodrProcessor
 end
 
 
-puts CodrProcessor.process('/Users/bmd/code/summit/brown-truck/app/models', '/Users/bmd/Dropbox/summit/uml/examples/brown-truck.txt')
+# TODO: use trollop to create cli
+
+#puts CodrProcessor.process('/Users/bmd/code/summit/brown-truck/app/models', '/Users/bmd/Dropbox/summit/uml/examples/brown-truck.txt')
+CodrProcessor.process('/Users/bmd/Documents/git/brown-truck/app/models', '/Users/bmd/Dropbox/summit/uml/examples/brown-truck.txt')
 
