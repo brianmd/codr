@@ -1,0 +1,74 @@
+@startuml
+
+' ----------  Relationships  ---------------
+
+' Analyzer <|-- RubyAnalyzer
+' Analyzer <|-- EmberAnalyzer
+
+Element <|-- NamedElement
+NamedElement <|-- Project
+NamedElement <|-- Package
+NamedElement <|-- Attribute
+NamedElement <|-- Method
+NamedElement <|-- Model
+
+Element *- "0..*" Element : relationships
+
+note left of Element
+The relationship queries method groups
+call selectRelationshpOfType
+
+Am looking at making a relationship
+called Superclass and a separate
+relationship called Subclass.
+Yet these two are intimately connected.
+How should this symbiotic relationship
+be modeled?
+end note
+
+
+' ----------  Class definitions  ------------
+
+' class Analyzer
+' class RubyAnalyzer
+' class EmberAnalyzer
+
+
+
+class Element {
+  owner : Element
+  visibility : boolean
+  -- relationship queries --
+  selectRelationsOfType
+}
+
+class NamedElement {
+  name : Symbol
+}
+
+class Project
+
+class Package {
+  -- relationship queries --
+  models
+  packages
+}
+
+class Attribute {
+  type : Symbol
+  size : Integer
+  isRequired : Boolean
+}
+
+class Model {
+  --
+  alias superclass, owner
+  -- relationship queries --
+  attributes
+  methods
+  subclasses
+  packages
+}
+
+@enduml
+

@@ -20,6 +20,9 @@ Or install it yourself as:
 
     $ gem install codr
 
+### Class Diagram
+![Alt text](/docs/codr.png?raw=true "Class Diagram")
+
 ## Usage
 
 TODO: Write usage instructions here
