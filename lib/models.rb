@@ -17,17 +17,19 @@ module Codr
     end
   end
 
-  class Project < Element
-    include Virtus.model
-    include ActiveModel::Validations
-  end
-
   class NamedElement < Element
     attribute :name, Symbol
   end
 
+  class Project < NamedElement
+    include Virtus.model
+    include ActiveModel::Validations
+  end
+
   class Attribute < NamedElement
     attribute :type, Symbol
+    attribute :size, Integer
+    # attribute :validations, OneToMany????
   end
 
   class Method < NamedElement
@@ -86,35 +88,41 @@ module Codr
   ################  Relationships  ##################
 
   class Relationship < Element
+    attribute :from, Element
   end
 
-  class DirectedRelationship < Relationship
-    attribute :from, Element
+  class OneToOneRelationship < Relationship
     attribute :to, Element
   end
 
-  class AttributeRelationship < DirectedRelationship
+  class OneToManyRelationship < Relationship
+    attribute :to, Array[Element]
+  end
+
+  class AttributeRelationship < OneToOneRelationship
     alias_method :model, :from
     alias_method :model=, :from=
     alias_method :attribute, :to
     alias_method :attribute=, :to=
   end
 
-  class MethodRelationship < DirectedRelationship
+  class MethodRelationship < OneToOneRelationship
     alias_method :model, :from
     alias_method :model=, :from=
     alias_method :method, :to
     alias_method :method=, :to=
   end
 
-  class CompositeRelationship < DirectedRelationship
-    alias_method :composite, :from
-    attribute :superclass, Model
+  class InheritanceRelationship < OneToManyRelationship
+    alias_method :superclass, :from
+    alias_method :superclass=, :from=
+    alias_method :subclasses, :to
+    alias_method :subclasses=, :to=
   end
 
-  class Superclass < DirectedRelationship
-    alias_method :superclass, :from
-    attribute :subclass, Model
+  class CompositeRelationship < OneToOneRelationship
+    alias_method :composite, :from
+    attribute :superclass, Model
   end
 
 end

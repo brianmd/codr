@@ -38,7 +38,8 @@ module Codr
       end
 
       def findParser(line)
-        [ClassDef, AttributeDef, PropertyDef, MethodDef].find{ |klass| klass.match?(line) }
+        [ClassDef, AttributeDef, PropertyDef, MethodDef, BelongsToDef, HasManyDef]
+          .find{ |klass| klass.match?(line) }
       end
     end
 
@@ -68,19 +69,30 @@ module Codr
       end
     end
 
+    class AttributeTypeDef < BaseDef
+      def self.klass; Codr::Attribute; end
+
+      def self.process(line)
+        m = get_match(line)
+        type = m[2]
+        $stderr.puts "class:#{self}:"
+        type = "[#{humanize(type)}]" if type and [BelongsToDef, HasManyDef].include?(self)
+        type = type+'*' if type and self==HasManyDef
+        klass.new(name: m[1], type: type)
+      end
+
+      def self.humanize(str)
+        str.split('-').collect{|s| s.capitalize}.join('')
+      end
+    end
+
     class PropertyDef < BaseDef
       def self.regex; /\s*([^:]+):\s+Ember.computed/; end
       def self.klass; Codr::Attribute; end
     end
 
-    class AttributeDef < BaseDef
+    class AttributeDef < AttributeTypeDef
       def self.regex; /\s*([^:]+):\s+DS.attr\('([^']+)'/; end
-      def self.klass; Codr::Attribute; end
-
-      def self.process(line)
-        m = get_match(line)
-        klass.new(name: m[1], type: m[2])
-      end
     end
 
     class MethodDef < BaseDef
@@ -90,14 +102,12 @@ module Codr
 
   # belongs_to: DS.belongsTo('belongs-to',  { async: true  }),
   # has_many:   DS.hasMany('has-many'),
-    class BelongsToDef < BaseDef
-      def self.regex; /\s*([^:]+):\s+DS.belongsTo\(/; end
-      def self.klass; Codr::Method; end
+    class BelongsToDef < AttributeTypeDef
+      def self.regex; /\s*([^:]+):\s+DS.belongsTo\('([^']+)'/; end
     end
 
-    class HashManyDef < BaseDef
-      def self.regex; /\s*([^:]+):\s+DS.hasMany\(/; end
-      def self.klass; Codr::Method; end
+    class HasManyDef < AttributeTypeDef
+      def self.regex; /\s*([^:]+):\s+DS.hasMany\('([^']+)'/; end
     end
   end
 end

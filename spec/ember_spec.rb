@@ -60,7 +60,7 @@ module Codr::Ember
         expect(models.first.name).to eq(:Abc)
         expect(models.first.superclass).to eq('AnotherClass')
         # note: Ember.computed is an attribute
-        expect(models.first.attributes.size).to eq(5)
+        expect(models.first.attributes.size).to eq(7)
         expect(models.first.methods.size).to eq(1)
       end
     end
