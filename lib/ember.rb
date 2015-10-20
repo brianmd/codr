@@ -44,12 +44,16 @@ module Codr
 
     class BaseDef
       def self.match?(line)
-        !regex.match(line).nil?
+        !get_match(line).nil?
       end
 
       def self.process(line)
-        m = regex.match(line)
+        m = get_match(line)
         klass.new(name: m[1])
+      end
+
+      def self.get_match(line)
+        regex.match(line)
       end
     end
 
@@ -57,25 +61,42 @@ module Codr
       def self.regex; /export.*default\s+(.*)\.extend/; end
 
       def self.process(line)
-        m = regex.match(line)
+        m = get_match(line)
         # TODO: okay, okay. i'm being lazy. the superclass should be a relationship
         superclass = m[1] if m and m[1]!='DS.Model'
         Codr::Model.new(superclass: superclass)
       end
     end
 
-    class AttributeDef < BaseDef
+    class PropertyDef < BaseDef
       def self.regex; /\s*([^:]+):\s+Ember.computed/; end
       def self.klass; Codr::Attribute; end
     end
 
-    class PropertyDef < BaseDef
-      def self.regex; /\s*([^:]+):\s+DS.attr\(/; end
+    class AttributeDef < BaseDef
+      def self.regex; /\s*([^:]+):\s+DS.attr\('([^']+)'/; end
       def self.klass; Codr::Attribute; end
+
+      def self.process(line)
+        m = get_match(line)
+        klass.new(name: m[1], type: m[2])
+      end
     end
 
     class MethodDef < BaseDef
       def self.regex; /\s*([^:]+):\s+function/; end
+      def self.klass; Codr::Method; end
+    end
+
+  # belongs_to: DS.belongsTo('belongs-to',  { async: true  }),
+  # has_many:   DS.hasMany('has-many'),
+    class BelongsToDef < BaseDef
+      def self.regex; /\s*([^:]+):\s+DS.belongsTo\(/; end
+      def self.klass; Codr::Method; end
+    end
+
+    class HashManyDef < BaseDef
+      def self.regex; /\s*([^:]+):\s+DS.hasMany\(/; end
       def self.klass; Codr::Method; end
     end
   end

@@ -38,7 +38,11 @@ module Codr
       @models.each do |model|
         out.puts "class #{model.name} {"
         model.attributes.each do |attr|
-          out.puts "  #{attr.name}"
+          if attr.type
+            out.puts "  #{attr.name} : #{attr.type}"
+          else
+            out.puts "  #{attr.name}"
+          end
         end
         out.puts '  --'
         model.methods.each do |method|

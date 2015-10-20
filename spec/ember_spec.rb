@@ -37,16 +37,16 @@ module Codr::Ember
         expect(subject.findParser('export default Availability.extend({')).to eq(ClassDef)
       end
 
+      it 'discovers variables' do
+        expect(subject.findParser("abc: DS.attr('boolean'),")).to eq(AttributeDef)
+      end
+
       it 'discovers properties' do
-        expect(subject.findParser("  abc: Ember.computed.equal('sdf',true)")).to eq(AttributeDef)
+        expect(subject.findParser("  abc: Ember.computed.equal('sdf',true)")).to eq(PropertyDef)
       end
 
       it 'discovers methods' do
         expect(subject.findParser("abc: function() {")).to eq(MethodDef)
-      end
-
-      it 'discovers variables' do
-        expect(subject.findParser("abc: Ember.computed.equal('sdf',true)")).to eq(AttributeDef)
       end
     end
 
